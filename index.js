@@ -25,18 +25,39 @@ io.on('connection', (socket) => {
 		// Store it
 		socket.roomcode = rc;
 		console.log('Room code is %s', socket.roomcode);
+
+		if(socket.username && socket.roomCode){
+			console.log('that ran');
+			socket.gid = connectFn();
+		}
 	});
 
 	socket.on('set username', (username) => {
 		socket.username = username;
 		console.log('Displayname  set to %s', socket.username);
+
 	});
 
 	socket.on('send move', (direction) => {
 	});
 
-	socket.on('initialize',
-});
+	socket.gid = connectFn();
+
+
+	async function connectFn() {
+
+		
+		while(!(socket.username && socket.roomcode)){
+		 	console.log('Not set yet.')
+		 	await sleep(1000);
+		}
+
+		credentials = loginAnonymously();
+		console.log(credentials);
+		joinRoom(credentials, socket.username, socket.roomcode);
+
+	}
+}); //End of io.on
 
 io.on('disconnect', (socket) => {
 	console.log('Client disconnected');
@@ -56,26 +77,13 @@ const joinRoom = (authState, displayName, roomCode) => {firebase.database().ref(
 })
 };
 
-const loginAnonymously =  () => firebase.auth().signInAnonymously()
+const loginAnonymously =  () => firebase.auth().signInAnonymously();
 
 
 //For waiting for variables to be set
 
 function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+	return new Promise(resolve => setTimeout(resolve, ms), reject => setTimeout(reject, ms));
 }
 
-async function initializeFn() {
 
-	
-	while(!(socket.username && socket.roomcode)){
-		console.log('Not set yet.')
-		await sleep(1000);
-	}
-
-	credentials = loginAnonymously();
-	console.log(credentials);
-	joinRoom(credentials, socket.username, socket.roomcode);
-		
-
-}
