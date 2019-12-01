@@ -52,9 +52,9 @@ io.on('connection', (socket) => {
 		 	await sleep(1000);
 		}
 
-		credentials = loginAnonymously();
-		console.log(credentials);
-		joinRoom(credentials, socket.username, socket.roomcode);
+		socket.credentials = await loginAnonymously();
+		console.log(socket.credentials);
+		joinRoom(socket.credentials, socket.username, socket.roomcode);
 
 	}
 }); //End of io.on
